@@ -67,12 +67,12 @@ export default class GalleryScreen extends Component {
           selection={{
             selectedImage: require('../images/hugging.png'),
             imagePosition: 'top-right',
-            enable: selectedImages.length < 5,
           }}
           onTapImage={(event) => this.onTapImage(event)}
           remoteDownloadIndicatorType={'progress-pie'} //spinner / progress-bar / progress-pie
           remoteDownloadIndicatorColor={'white'}
           backgroundColor={'pink'}
+          enable={selectedImages.length < 5}
         />
       </View>
     );

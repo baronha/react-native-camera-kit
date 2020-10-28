@@ -25,8 +25,6 @@ typedef void (^CompletionBlock)(BOOL success);
 
 //props
 @property (nonatomic)         UIColor *backgroundColor;
-@property (nonatomic, strong) NSNumber *limit;
-@property (nonatomic, strong) NSNumber *count;
 @property (nonatomic, strong) NSString *albumName;
 @property (nonatomic, strong) NSNumber *minimumLineSpacing;
 @property (nonatomic, strong) NSNumber *minimumInteritemSpacing;
@@ -55,6 +53,7 @@ typedef void (^CompletionBlock)(BOOL success);
 @property (nonatomic, strong) NSNumber *disableSelectionIcons;
 @property (nonatomic, strong) NSDictionary *selection;
 @property (nonatomic)         UIEdgeInsets contentInset;
+@property (nonatomic)         BOOL enable;
 @property (nonatomic)         BOOL alwaysBounce;
 @property (nonatomic)         BOOL isHorizontal;
 @property (nonatomic)         BOOL cellSizeInvalidated;
@@ -575,6 +574,14 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
         PHAsset *asset = assetDictionary[@"asset"];
         NSNumber *isSelectedNumber = assetDictionary[@"isSelected"];
         
+        NSLog(self.enable ? @"YES" : @"NO");
+        
+        NSLog(isSelectedNumber.boolValue ? @"YES" : @"NO");
+        
+        if(isSelectedNumber.boolValue == NO && self.enable == NO){
+            return;
+        }
+        
         assetDictionary[@"isSelected"] = [NSNumber numberWithBool:!(isSelectedNumber.boolValue)];
         
         [self downloadImageFromICloudIfNeeded:asset cell:ckCell completion:^(BOOL success) {
@@ -742,8 +749,7 @@ RCT_EXPORT_MODULE()
 }
 
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor);
-RCT_EXPORT_VIEW_PROPERTY(count, NSNumber);
-RCT_EXPORT_VIEW_PROPERTY(limit, NSNumber);
+RCT_EXPORT_VIEW_PROPERTY(enable, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(albumName, NSString);
 RCT_EXPORT_VIEW_PROPERTY(minimumLineSpacing, NSNumber);
 RCT_EXPORT_VIEW_PROPERTY(minimumInteritemSpacing, NSNumber);
