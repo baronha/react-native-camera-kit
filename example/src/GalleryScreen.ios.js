@@ -1,67 +1,65 @@
 import _ from 'lodash';
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Button,
-  Image,
-  Dimensions
-} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, View, Button, Image, Dimensions } from 'react-native';
 
-import {CameraKitGallery} from '../../src';
+import { CameraKitGallery } from '../../src';
 import CameraKitGalleryView from '../../src/CameraKitGalleryView';
 
-const {width, height} = Dimensions.get('window');
-const size = Math.floor((Dimensions.get('window').width) / 3);
+const { width, height } = Dimensions.get('window');
 
 export default class GalleryScreen extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       album: this.props.albumName,
       presentedImage: undefined,
       selectedImages: [],
-      showPresentedImage: false
-    }
+      showPresentedImage: false,
+    };
   }
 
-  async onTapImage(event) {
-    const isSelected = event.nativeEvent.isSelected;
-    const image = await CameraKitGallery.getImageForTapEvent(event.nativeEvent);
+  onTapImage(event) {
+    const { selectedImages } = this.state;
+    const imageArray = [...selectedImages];
+    const selected = event?.nativeEvent?.selected;
+    const foundIndex = imageArray.findIndex((item) => item === selected);
 
-    if (!isSelected || _.get(image, 'selectedImageId') === _.get(this.state, 'presentedImage.selectedImageId')) {
-      this.setState({presentedImage: undefined, showPresentedImage: false});
-    } else if (image) {
-      this.setState({presentedImage: image, showPresentedImage: true});
+    if (foundIndex < 0) {
+      if (selectedImages.length === 5) {
+        alert('limit');
+        return;
+      }
+      imageArray.push(selected);
+    } else {
+      imageArray.splice(foundIndex, 1);
     }
+
+    this.setState({ selectedImages: imageArray });
   }
 
   renderPresentedImage() {
     return (
-      <View style={{position: 'absolute', width, height, backgroundColor: 'green'}}>
+      <View style={{ position: 'absolute', width, height, backgroundColor: 'green' }}>
         <View style={styles.container}>
           <Image
             resizeMode={'cover'}
-            style={{width: 300, height: 300}}
-            source={{uri: this.state.presentedImage.imageUri}}
+            style={{ width: 300, height: 300 }}
+            source={{ uri: this.state.presentedImage.imageUri }}
           />
 
-          <Button
-            title={'Back'}
-            onPress={() => this.setState({showPresentedImage: false})}
-          />
+          <Button title={'Back'} onPress={() => this.setState({ showPresentedImage: false })} />
         </View>
       </View>
-    )
+    );
   }
 
   render() {
+    const { selectedImages } = this.state;
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <CameraKitGalleryView
-          style={{flex:1, margin: 0, marginTop: 50}}
+          style={{ flex: 1, margin: 0, marginTop: 50 }}
           albumName={this.state.album}
           minimumInteritemSpacing={10}
           minimumLineSpacing={10}
@@ -69,14 +67,15 @@ export default class GalleryScreen extends Component {
           selection={{
             selectedImage: require('../images/hugging.png'),
             imagePosition: 'top-right',
+            enable: selectedImages.length < 5,
           }}
-          onTapImage={event => this.onTapImage(event)}
+          onTapImage={(event) => this.onTapImage(event)}
           remoteDownloadIndicatorType={'progress-pie'} //spinner / progress-bar / progress-pie
           remoteDownloadIndicatorColor={'white'}
+          backgroundColor={'pink'}
         />
-        {this.state.showPresentedImage && this.renderPresentedImage()}
       </View>
-    )
+    );
   }
 }
 
@@ -86,5 +85,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-  }
+  },
 });

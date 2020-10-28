@@ -24,6 +24,9 @@ typedef void (^CompletionBlock)(BOOL success);
 @interface CKGalleryView : UIView <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, CKGalleryCollectionViewCellDelegate>
 
 //props
+@property (nonatomic)         UIColor *backgroundColor;
+@property (nonatomic, strong) NSNumber *limit;
+@property (nonatomic, strong) NSNumber *count;
 @property (nonatomic, strong) NSString *albumName;
 @property (nonatomic, strong) NSNumber *minimumLineSpacing;
 @property (nonatomic, strong) NSNumber *minimumInteritemSpacing;
@@ -152,7 +155,7 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
         [self.collectionView registerClass:[CKGalleryCollectionViewCell class] forCellWithReuseIdentifier:CellReuseIdentifier];
         [self.collectionView registerClass:[CKGalleryCustomCollectionViewCell class] forCellWithReuseIdentifier:CustomCellReuseIdentifier];
         [self addSubview:self.collectionView];
-        self.collectionView.backgroundColor = [UIColor whiteColor];
+        self.collectionView.backgroundColor = _backgroundColor ? self.backgroundColor :  [UIColor whiteColor];
     }
     else {
         self.collectionView.frame = self.bounds;
@@ -231,6 +234,14 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
     }
     _contentInset = contentInset;
 }
+
+-(void)setBackgroundColor:(UIColor *)backgroundColor{
+    if(self.collectionView) {
+        self.collectionView.backgroundColor = backgroundColor;
+    }
+    _backgroundColor = backgroundColor;
+}
+
 
 -(void)setRemoteDownloadIndicatorColor:(UIColor *)remoteDownloadIndicatorColor {
     [CKGalleryCollectionViewCell setRemoteDownloadIndicatorColor:remoteDownloadIndicatorColor];
@@ -544,7 +555,7 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
 
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     NSInteger galleryDataIndex = indexPath.row;
     if (self.customButtonStyle) {
         galleryDataIndex--;
@@ -559,12 +570,13 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
 
     if ([selectedCell isKindOfClass:[CKGalleryCollectionViewCell class]]) {
         CKGalleryCollectionViewCell *ckCell = (CKGalleryCollectionViewCell*)selectedCell;
-
+        
         NSMutableDictionary *assetDictionary = (NSMutableDictionary*)self.galleryData.data[galleryDataIndex];
         PHAsset *asset = assetDictionary[@"asset"];
         NSNumber *isSelectedNumber = assetDictionary[@"isSelected"];
+        
         assetDictionary[@"isSelected"] = [NSNumber numberWithBool:!(isSelectedNumber.boolValue)];
-
+        
         [self downloadImageFromICloudIfNeeded:asset cell:ckCell completion:^(BOOL success) {
 
             if (success) {
@@ -589,6 +601,7 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
             galleryDataIndex--;
         }
         NSDictionary *assetDictionary = (NSDictionary*)self.galleryData.data[galleryDataIndex];
+        
         ckCell.isSelected = ((NSNumber*)assetDictionary[@"isSelected"]).boolValue;
     }
 }
@@ -635,7 +648,7 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
 
 -(void)onSelectChanged:(PHAsset*)asset isSelected:(BOOL)isSelected{
     if (self.onTapImage) {
-
+        
         NSMutableDictionary *imageTapInfo = [@{@"width": [NSNumber numberWithUnsignedInteger:asset.pixelWidth],
                                                @"height": [NSNumber numberWithUnsignedInteger:asset.pixelHeight]} mutableCopy];
 
@@ -728,7 +741,9 @@ RCT_EXPORT_MODULE()
     return self.galleryView;
 }
 
-
+RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor);
+RCT_EXPORT_VIEW_PROPERTY(count, NSNumber);
+RCT_EXPORT_VIEW_PROPERTY(limit, NSNumber);
 RCT_EXPORT_VIEW_PROPERTY(albumName, NSString);
 RCT_EXPORT_VIEW_PROPERTY(minimumLineSpacing, NSNumber);
 RCT_EXPORT_VIEW_PROPERTY(minimumInteritemSpacing, NSNumber);

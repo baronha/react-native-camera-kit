@@ -1,6 +1,4 @@
-import {
-  NativeModules,
-} from 'react-native';
+import { NativeModules } from 'react-native';
 
 var CKGallery = NativeModules.CKGalleryManager;
 
@@ -9,7 +7,7 @@ async function getAlbumsWithThumbnails() {
 }
 
 async function getImageUriForId(imageId, imageQuality) {
-  const {images} = await CKGallery.getImagesForIds([imageId], imageQuality);
+  const { images } = await CKGallery.getImagesForIds([imageId], imageQuality);
   if (!images) {
     return;
   }
@@ -33,16 +31,16 @@ async function getImageForTapEvent(nativeEvent) {
     selectedImageId = nativeEvent.selected;
     imageUri = await getImageUriForId(selectedImageId);
   }
-  return {selectedImageId, imageUri, width: nativeEvent.width, height: nativeEvent.height};
+  return { selectedImageId, imageUri, width: nativeEvent.width, height: nativeEvent.height };
 }
 
-async function getImagesForCameraEvent(event) {
+function getImagesForCameraEvent(event) {
   return event.captureImages || [];
 }
 
 async function resizeImage(image = {}, quality = 'original') {
   if (quality === 'original') {
-    return images;
+    return image;
   }
 
   return await CKGallery.resizeImage(image, quality);
@@ -56,7 +54,6 @@ async function requestDevicePhotosAuthorization() {
   return await CKGallery.requestDevicePhotosAuthorization();
 }
 
-
 export default {
   getAlbumsWithThumbnails,
   getImageUriForId,
@@ -65,5 +62,5 @@ export default {
   getImagesForCameraEvent,
   checkDevicePhotosAuthorizationStatus,
   requestDevicePhotosAuthorization,
-  resizeImage
-}
+  resizeImage,
+};

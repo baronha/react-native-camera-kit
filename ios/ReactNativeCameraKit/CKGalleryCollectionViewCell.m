@@ -86,7 +86,6 @@ static NSString *remoteDownloadIndicatorType = REMOTE_DOWNLOAD_INDICATOR_TYPE_SP
     if (selectionDict) selection = selectionDict;
 }
 
-
 +(void)cleanStaticsVariables {
     selectedImageIcon = nil;
     unSelectedImageIcon = nil;
@@ -367,10 +366,17 @@ static NSString *remoteDownloadIndicatorType = REMOTE_DOWNLOAD_INDICATOR_TYPE_SP
 }
 
 
--(void)setIsSelected:(BOOL)isSelected {
-
+-(void)setIsSelected:(BOOL)isSelected{
+    
+    if (_isSelected == NO) {
+        BOOL enable = [selection[@"enable"] boolValue] ?: NO;
+        if (enable == NO) {
+            return;
+        }
+    }
+    
     _isSelected = isSelected;
-
+    
     if (self.disableSelectionIcons) return;
 
     [self setSelectedOverLay:isSelected forceOverlay:NO];
