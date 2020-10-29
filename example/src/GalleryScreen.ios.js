@@ -52,11 +52,6 @@ export default class GalleryScreen extends Component {
     console.log('imgs', imgs);
     // this.setState({ selectedImages: imgs.images });
   }
-
-  componentWillUpdate(np, ns) {
-    console.log('ns', ns.selectedImages);
-  }
-
   render() {
     const { selectedImages } = this.state;
 

@@ -270,6 +270,7 @@ RCT_EXPORT_METHOD(resizeImage:(NSDictionary*)image
                                                                                   @"height": assetInfoDict[@"height"],
                                                                                   @"size": assetInfoDict[@"size"],
                                                                                   @"name": assetInfoDict[@"name"],
+                                                                                  @"type": @"photo",
                                                                                   @"id": assetLocalId}];
             }
         }
