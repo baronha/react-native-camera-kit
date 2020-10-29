@@ -7,14 +7,18 @@ async function getAlbumsWithThumbnails() {
 }
 
 async function getImageUriForId(imageId, imageQuality) {
-  const { images } = await CKGallery.getImagesForIds([imageId], imageQuality);
-  if (!images) {
+  try {
+    const { images } = await CKGallery.getImagesForIds([imageId], imageQuality);
+    if (!images) {
+      return;
+    }
+    if (images.length === 1) {
+      return images[0].uri;
+    }
     return;
+  } catch (e) {
+    console.log('e', e);
   }
-  if (images.length === 1) {
-    return images[0].uri;
-  }
-  return;
 }
 
 async function getImagesForIds(imagesId = [], imageQuality) {

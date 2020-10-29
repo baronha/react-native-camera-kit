@@ -574,10 +574,10 @@ static NSString * const CustomCellReuseIdentifier = @"CustomCell";
         PHAsset *asset = assetDictionary[@"asset"];
         NSNumber *isSelectedNumber = assetDictionary[@"isSelected"];
         
-        NSLog(self.enable ? @"YES" : @"NO");
-        
-        NSLog(isSelectedNumber.boolValue ? @"YES" : @"NO");
-        
+//        NSLog(self.enable ? @"YES" : @"NO");
+//        
+//        NSLog(isSelectedNumber.boolValue ? @"YES" : @"NO");
+//        
         if(isSelectedNumber.boolValue == NO && self.enable == NO){
             return;
         }

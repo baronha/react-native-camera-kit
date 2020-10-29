@@ -250,25 +250,49 @@ RCT_EXPORT_METHOD(resizeImage:(NSDictionary*)image
     PHImageRequestOptions *imageRequestOptions = [[PHImageRequestOptions alloc] init];
     imageRequestOptions.synchronous = YES;
 
-    PHFetchResult *assets = [PHAsset fetchAssetsWithLocalIdentifiers:imagesIdArray options:nil];
-
-    for (PHAsset *asset in assets) {
-
-        NSDictionary *assetInfoDict = [CKGalleryViewManager infoForAsset:asset imageRequestOptions:imageRequestOptions imageQuality:imageQuality];
-        NSString *assetLocalId = asset.localIdentifier;
-
-        if (assetInfoDict && assetInfoDict[@"uri"] && assetInfoDict[@"size"] && assetInfoDict[@"name"] && assetLocalId) {
-
-            NSUInteger originalArrayIndex = [imagesIdArray indexOfObject:assetLocalId];
-
-            [assetsArray replaceObjectAtIndex:originalArrayIndex withObject:@{@"uri": assetInfoDict[@"uri"],
-                                                                              @"width": assetInfoDict[@"width"],
-                                                                              @"height": assetInfoDict[@"height"],
-                                                                              @"size": assetInfoDict[@"size"],
-                                                                              @"name": assetInfoDict[@"name"],
-                                                                              @"id": assetLocalId}];
+    for(int i = 0 ; i < [imagesIdArray count]; i++ ){
+        NSString *item = imagesIdArray[i];
+        if([item isKindOfClass:[NSString class]]){
+            NSArray *array = @[item];
+            PHFetchResult *assets = [PHAsset fetchAssetsWithLocalIdentifiers:array options:nil];
+            
+            PHAsset *asset = assets[0];
+            
+            NSDictionary *assetInfoDict = [CKGalleryViewManager infoForAsset:asset imageRequestOptions:imageRequestOptions imageQuality:imageQuality];
+            NSString *assetLocalId = asset.localIdentifier;
+            
+            if (assetInfoDict && assetInfoDict[@"uri"] && assetInfoDict[@"size"] && assetInfoDict[@"name"] && assetLocalId) {
+                
+                NSUInteger originalArrayIndex = [imagesIdArray indexOfObject:assetLocalId];
+                
+                [assetsArray replaceObjectAtIndex:originalArrayIndex withObject:@{@"uri": assetInfoDict[@"uri"],
+                                                                                  @"width": assetInfoDict[@"width"],
+                                                                                  @"height": assetInfoDict[@"height"],
+                                                                                  @"size": assetInfoDict[@"size"],
+                                                                                  @"name": assetInfoDict[@"name"],
+                                                                                  @"id": assetLocalId}];
+            }
         }
     }
+//    PHFetchResult *assets = [PHAsset fetchAssetsWithLocalIdentifiers:imagesIdArray options:nil];
+//
+//    for (PHAsset *asset in assets) {
+//
+//        NSDictionary *assetInfoDict = [CKGalleryViewManager infoForAsset:asset imageRequestOptions:imageRequestOptions imageQuality:imageQuality];
+//        NSString *assetLocalId = asset.localIdentifier;
+//
+//        if (assetInfoDict && assetInfoDict[@"uri"] && assetInfoDict[@"size"] && assetInfoDict[@"name"] && assetLocalId) {
+//
+//            NSUInteger originalArrayIndex = [imagesIdArray indexOfObject:assetLocalId];
+//
+//            [assetsArray replaceObjectAtIndex:originalArrayIndex withObject:@{@"uri": assetInfoDict[@"uri"],
+//                                                                              @"width": assetInfoDict[@"width"],
+//                                                                              @"height": assetInfoDict[@"height"],
+//                                                                              @"size": assetInfoDict[@"size"],
+//                                                                              @"name": assetInfoDict[@"name"],
+//                                                                              @"id": assetLocalId}];
+//        }
+//    }
 
     NSMutableArray *resolveArray = [NSMutableArray new];
     for (id obj in assetsArray) {
